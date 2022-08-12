@@ -18,8 +18,10 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -44,8 +46,14 @@ public class MainActivity extends AppCompatActivity {
     EditText getCode;
     MaterialButton checkCode;
     TextView displayCode,networkName;
+
+    //Minors
     int i = 0;
     int sim;
+
+    //message which checks if it's valid or not
+    String validFrench="Veuillez rentrer le numero de telephone du beneficiaire et Validez";
+    String validEnglish="Please enter the beneficiary's phone number and Validate";
 
 
     @Override
@@ -54,6 +62,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getSupportActionBar().hide();
 
+
+        //TelephonyManager Instantiated
         TelephonyManager manager = (TelephonyManager) this.getSystemService(TELEPHONY_SERVICE);
 
 
@@ -63,19 +73,22 @@ public class MainActivity extends AppCompatActivity {
         displayCode = findViewById(R.id.displayCode);
         networkName=findViewById(R.id.sim_name);
 
+
+
         //get sim name
         String getSimName=manager.getNetworkOperatorName();
 
         //Set the name to textview
-        networkName.setText("You're Using: " + getSimName);
+        networkName.setText("Hello! You're Using: " + getSimName + " | " + Build.MANUFACTURER);
 
         //Dialog Box for Instructions
         MaterialAlertDialogBuilder dialogBuilder=new MaterialAlertDialogBuilder(this);
-        dialogBuilder.setTitle("IMEI Checker 1.1 Info");
-        dialogBuilder.setMessage("Instructions\n\n 1) error code: -1 means request didn't reach server. \n\n 2) Valid IMEI Codes are displayed in the box below \n\n\nDeveloper: Redeem_Grimm");
+        dialogBuilder.setTitle("IMEI Checker 1.5 Info");
+        dialogBuilder.setMessage("Instructions\n\n 1) error code: -1 means request didn't reach server. \n\n 2) Valid IMEI Codes are displayed in the box below \n\n 3) Multi-session wrapper coming soon!  \n\n\nDeveloper: Redeem_Grimm");
         dialogBuilder.setPositiveButton("OK",new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
+                messenger("Welcome " + Build.MANUFACTURER);
             }
         });
         AlertDialog alertDialog=dialogBuilder.create();
@@ -88,8 +101,17 @@ public class MainActivity extends AppCompatActivity {
 
         //When Button Clicked It Starts Checking
         checkCode.setOnClickListener(view -> {
-            scrapIMEI();
+            //check is IMEI code is empty or not
+            if(TextUtils.isEmpty(getCode.getText().toString())){
+                messenger("Please Enter IMEI Codes!");
+            }else {
+
+                //if it's not empty, it executes this function
+                scrapIMEI();
+            }
         });
+
+
 
 
     }
@@ -113,9 +135,13 @@ public class MainActivity extends AppCompatActivity {
                 TelephonyManager manager2 = manager.createForSubscriptionId(2);
 
 
+
+                //automatically selects the first sim ( not dual sim capable for now )
                 TelephonyManager managerMain = (sim == 0) ? manager : manager2;
                 StringBuilder builder = new StringBuilder();
 
+
+                //this part is tricky, multi-session ussd request update coming soon!
                 for (i = 0; i < IMEI.length; i++) {
                     if (IMEI[i].equalsIgnoreCase("")) return;
 
@@ -125,22 +151,19 @@ public class MainActivity extends AppCompatActivity {
                         public void onReceiveUssdResponse(TelephonyManager telephonyManager, String request, CharSequence response) {
                             super.onReceiveUssdResponse(telephonyManager, request, response);
                             String result = response.toString();
-                            if (result.contains("Veuillez rentrer le numero de telephone du beneficiaire et Validez")) {
+                            if (result.contains(validFrench)|| result.contains(validEnglish)) {
                                 builder.append(IMEI[i] + "\n");
                                 getCode.setText(IMEI[i] + "");
 
-                                //Set Toast
-                                Toast.makeText(MainActivity.this, "IMEI Validated!", Toast.LENGTH_SHORT);
+                                messenger("IMEI Validated");
                             } else {
-
-                                //Set Toast
-                                Toast.makeText(MainActivity.this, "IMEI Invalid!", Toast.LENGTH_SHORT);
+                                messenger("IMEI Invalid");
 
                             }
 
 
                             Log.e("TAG", "onReceiveUssdResponse:  Ussd Response = " + response.toString().trim());
-                            Toast.makeText(MainActivity.this, response, Toast.LENGTH_SHORT).show();
+                           messenger(response.toString());
 
 
                         }
@@ -163,11 +186,18 @@ public class MainActivity extends AppCompatActivity {
                         }
                     }, new Handler());
 
+
+                    //adds/appends valid IMEI to textview below
                     displayCode.setText(builder.toString());
                 }
             }
         }
 
+    }
+
+    //messenger
+    void messenger(String message){
+        Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();
     }
 }
 
