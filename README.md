@@ -9,7 +9,7 @@ Scraps IMEI Codes From Orange Servers
 
 # How to run it
 
-Clone code in your android IDE and run!
+Clone code in your android IDE ( Electric Eel ) and run!
 
 # No time to run the code? no worries, download apk below
 
