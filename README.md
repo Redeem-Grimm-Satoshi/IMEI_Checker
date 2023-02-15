@@ -18,3 +18,5 @@ Clone code in your android IDE ( Electric Eel ) and run!
 # Feel Free To Contribute, Thanks! 👍)
 
 New UI Update and More Features Comming Soon!!
+
+Project Structure Changed.
