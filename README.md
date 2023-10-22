@@ -1,6 +1,6 @@
 # IMEIChecker
 
-Verify IMEI Code if valid for Hack
+Verify IMEI Code if valid for Hack.
 
 # Screen
 ![splash](https://user-images.githubusercontent.com/45304978/184277812-cf9542d3-9538-47c3-a2b7-25ec13d8552d.PNG)
