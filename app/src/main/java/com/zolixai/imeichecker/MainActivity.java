@@ -94,11 +94,6 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog alertDialog=dialogBuilder.create();
         alertDialog.show();
 
-
-
-
-
-
         //When Button Clicked It Starts Checking
         checkCode.setOnClickListener(view -> {
             //check is IMEI code is empty or not
@@ -110,9 +105,6 @@ public class MainActivity extends AppCompatActivity {
                 scrapIMEI();
             }
         });
-
-
-
 
     }
 
@@ -195,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //messenger
+    //messenger: send message via Toast
     void messenger(String message){
         Toast.makeText(MainActivity.this, message,Toast.LENGTH_SHORT).show();
     }
